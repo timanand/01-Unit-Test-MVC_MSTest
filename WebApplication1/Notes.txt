@@ -1,0 +1,344 @@
+(#68) Unit testing in MVC 5 | 
+mvc tutorial for beginners in .net c# | MVC By Nitish (35 mins 51 secs)
+https://www.youtube.com/watch?v=D2hJcR3IN_A
+
+
+WHAT IS UNIT TESTING ?
+----------------------
+
+- Unit Testing is a component of TDD
+
+- Unit Testing is the first level of testing which is done by the developer
+to test a small unit of source code. Small unit means method, class etc...
+
+- In Unit Testing, the developer has to write the code.
+
+- Used to check if code is working fine or not.
+
+
+
+WHY SHOULD I LEARN UNIT TESTING ?
+---------------------------------
+
+Any change that you cannot catch at compile time.
+
+
+Let's say we have an action method :
+
+public ActionResult Index()
+{
+   return View("Index");
+}
+
+
+By accident, later on we could type "Indexsss" by mistake.
+
+The project will build successfully. But in production, it will fail!
+
+
+
+UNIT TESTING FRAMEWORKS
+-----------------------
+
+- You can write test cases for any language.
+
+- For each language, there are multiple frameworks available.
+But for each framework, the concept is the same.
+
+- Microsoft has created its own Unit Test Framework (MSTest).
+
+
+
+Unit Test is a combination of 3 things :
+
+1. Arrange - setup the test data
+2. Act - perform the actual test
+3. Assert - Verify the result
+
+
+
+HOW TO ADD A TEST PROJECT ?
+---------------------------
+
+1. Add a new test project in an existing application.
+2. Add a test project while creating new application.
+
+
+9:50 Let's play with code
+
+Run Visual Studio 2019
+
+In example, select 'ASP.NET Web Application (.NET Framework)
+Select 'MVC'
+Click 'OK'
+
+
+We need to add a new project (ie. Testing) :
+
+Goto Solution Explorer
+Right mouse click on Solution and select 'Add' - 'New Project'
+
+In example, select 'Unit Test Project (.NET Framework'
+(NOTE: can select 'MS Test' as that is the same code as tutorial video).
+
+Name: 'MyApp.UnitTest'
+
+It will create 'UnitTest1.cs'
+
+namespace MyApp.UnitTest
+{
+
+	[TestClass]
+	public class UnitTest1
+	{
+	
+		[TestMethod]
+		public void TestMethod1()
+		{
+
+		}
+	}
+
+}
+
+
+
+13:03 WHEN CREATING A NEW APPLICATION, HOW TO ADD TEST PROJECT ?
+----------------------------------------------------------------
+
+In example, select 'ASP.NET Web Application (.NET Framework)
+Select 'MVC'
+Click 'OK'
+Name: WebApplication44
+
+There is a checkbox 'Add unit tests'
+Test Project Name: WebApplication44.Tests
+
+Click 'OK'
+
+
+NOTE: Because we used Template to create project.
+
+In WebApplication44, there is 'Controllers\HomeController.cs'.
+
+In WebApplication44.Tests, there is 'Controllers\HomeControllerTest.cs'
+(any classes under Controllers folder are simple classes, nothing else).
+
+
+HomeControllerTest.cs automatically has the following :
+
+using System.Web.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WebApplication44;
+using WebApplication44.Controllers.
+
+
+****************************************************************************
+
+MY VERSION
+
+Run Visual Studio 2019
+Create a New Project
+ASP.NET Core Web App (Model-View-Controller)
+Click 'Next'
+
+ProjectName : WebApplication1
+Click 'Next'
+Click 'Create'
+
+Goto Solution Explorer
+Goto Controllers
+Right mouse click and select 'Add' - 'Controller'
+Select 'MVC Controller - Empty'
+Click 'Add'
+Name: 'StaffController.cs'
+Click 'Add'
+
+
+It creates 'StaffController.cs'
+
+namespace WebApplication1.Controllers
+{
+    public class StaffController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+    }
+}
+
+
+
+Goto Solution Explorer
+Right mouse click on Solution and select 'Add' - 'New Project'
+Select 'MSTest Test Project' C#
+Click 'Next'
+
+Project Name:  'WebApplication1.Tests'
+Click 'Next'
+Click 'Create'
+
+
+It creates 'UnitTest1.cs'
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace TestProject1
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        [TestMethod]
+        public void TestMethod1()
+        {
+
+        }
+    }
+}
+
+
+
+Goto Solution Explorer
+Right mouse click on 'TestProject1' and select 'Add' - 'Project Reference'
+Click on checkbox for 'WebApplication1'
+Click 'OK'
+
+
+Update 'UnitTest1.cs' as follows
+----->
+
+// Added by AANA
+using Microsoft.AspNetCore.Mvc;
+using WebApplication1;
+using WebApplication1.Controllers;
+using WebApplication1.Models;
+
+
+namespace TestProject1
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        [TestMethod]
+        public void TestMethod1()
+        {
+            StaffController controller = new StaffController();
+
+            ViewResult result = controller.Index() as ViewResult;
+
+            Assert.IsNotNull(result);
+        }
+    }
+}
+
+
+
+
+
+In WebApplication1, add the following :
+
+Goto Solution Explorer
+Right mouse click on 'Models' and select 'Add' - 'Class'
+Name: Employee.cs
+Click 'Add'
+
+It creates 'Employee.cs'. 
+Add the following :
+
+    public class Employee
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+
+In StaffController.cs, add the following :
+
+	using WebApplication1.Models;
+
+        public IActionResult Index()
+        {
+            //return View(""); // default
+            return View("Index");
+        }
+
+	Right mouse click in Index Action method, and select 'Add View' - Razor View.
+	Click 'Add'
+
+        public ActionResult About()
+        {
+            ViewData["Title"] = "Your application description page.";
+            return View();
+        }
+
+        public IActionResult zzz()
+        {
+            Employee emp = new Employee()
+            {
+                Id = 1,
+                Name = "Nitish"
+            };
+            return View("zzz", emp);
+        }
+
+
+
+Goto TestProject1 and add the following to 'UnitTest1.cs' :
+
+        [TestMethod]
+        public void About()
+        {
+            StaffController controller = new StaffController();
+
+            ViewResult result = controller.About() as ViewResult;
+
+            Assert.AreEqual("Your application", result.ViewData["Title"]);
+            //Assert.AreEqual("Your application description page.", result.ViewData["Title"]);
+        }
+
+
+        [TestMethod]
+        public void TestIndexMethod()
+        {
+            // Arrange
+            var controller = new StaffController();
+
+            string viewName = "Index";
+
+            // Act
+            var result = controller.Index() as ViewResult;
+
+            // Assert
+            Assert.AreEqual(viewName, result.ViewName);
+
+        }
+
+
+        [TestMethod]
+        public void TestZZZMethod()
+        {
+            // Arrange
+            var controller = new StaffController();
+
+            //string viewName = "zzz";
+            string name = "Nitish";
+
+            // Act
+            var result   = controller.zzz() as ViewResult;
+            var model = (Employee) result.Model;
+
+            // Assert
+            //Assert.AreEqual(viewName, result.ViewName);
+            Assert.AreEqual(name, model.Name);
+
+        }
+
+
+
+
+
+
+
+
+
